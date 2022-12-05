@@ -51,7 +51,7 @@ def drawCenter(frame, result) -> None:
     (X, Y) = (int(result.center[0]), int(result.center[1]))
     cv.circle(frame, (X, Y), 3, (0, 0, 255), -1)
 
-def isSquare(coord_a: list, coord_b: list, coord_c: list, coord_d: list) -> bool:
+def isSquare(coord_a: tuple, coord_b: tuple, coord_c: tuple, coord_d: tuple) -> bool:
     side_a = math.dist([coord_a[0], coord_a[1]], [coord_b[0], coord_b[1]])
     side_b = math.dist([coord_b[0], coord_b[1]], [coord_c[0], coord_c[1]])
     side_c = math.dist([coord_c[0], coord_c[1]], [coord_d[0], coord_d[1]])
