@@ -96,7 +96,7 @@ public class Limelight {
     public void mapOriginPairs() {
         //initialize dictionary 
         poses = new HashMap<Double, Pose2d>(); 
-        poses.put(this.getTid(), origin);
+        poses.put(this.getTid(), this.origin);
         System.out.println("Successfully mapped");
 
     }
