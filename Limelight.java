@@ -12,7 +12,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class Limelight {
@@ -32,9 +31,7 @@ public class Limelight {
 
     //trajectory fields
     private Trajectory trajectory;
-    private TrajectoryConfig config; 
     HashMap<Double, Pose2d> poses; 
-    Pose2d origin; 
 
     public Limelight() {
         System.out.println("Limelight object initialized");
@@ -48,6 +45,8 @@ public class Limelight {
         tid = table.getEntry("tid");
         tagpose = table.getEntry("targetpose_robotspace").getDoubleArray(new double[6]); 
         botpose = table.getEntry("robotpose_targetspace").getDoubleArray(new double[6]); 
+
+        poses = new HashMap<Double, Pose2d>(); 
     
     }
 
@@ -95,24 +94,22 @@ public class Limelight {
 
     public void mapOriginPairs() {
         //initialize dictionary 
-        poses = new HashMap<Double, Pose2d>(); 
-        poses.put(this.getTid(), this.origin);
-        System.out.println("Successfully mapped");
+        if (this.getTv() == 1) {
+            poses.put(this.getTid(), getTagPose());
+            System.out.println("Successfully mapped");
+        }
+
+        else {
+            System.out.println("No mapping to be done");
+        }
 
     }
 
-    public Trajectory generateTargetTrajectory(Pose2d origin) {
+    public Trajectory generateTargetTrajectory(Pose2d origin, TrajectoryConfig config) {
         System.out.println("Trajectory generated successfully"); 
-        
-        config = new TrajectoryConfig(
-           Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-           Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-           .setKinematics(Constants.Swerve.swerveKinematics);
-        
         //set tag pose as the current origin 
         //origin = this.getTagPose();
-
-        RobotContainer.s_Swerve.resetOdometry(origin);
+        RobotContainer.s_Swerve.resetOdometry(origin); //sets origin to tag pose 
     
         trajectory = TrajectoryGenerator.generateTrajectory(
             // robot pose -> target space 
