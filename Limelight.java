@@ -1,5 +1,7 @@
 package frc.lib.util;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -31,6 +33,8 @@ public class Limelight {
     //trajectory fields
     private Trajectory trajectory;
     private TrajectoryConfig config; 
+    HashMap<Double, Pose2d> poses; 
+    Pose2d origin; 
 
     public Limelight() {
         System.out.println("Limelight object initialized");
@@ -51,8 +55,12 @@ public class Limelight {
         return new Pose2d(tagpose[0], tagpose[1], new Rotation2d(tagpose[5]));
     }
 
-    public Pose2d getBotPose() {  
+    public Pose2d getBotPose() {  //limelight bot pose 
         return new Pose2d(botpose[0], botpose[1], new Rotation2d(botpose[5]));
+    }
+
+    public void printTargetPoses() {
+        System.out.println(Arrays.asList(poses));
     }
 
     public double getTa() {
@@ -85,15 +93,24 @@ public class Limelight {
         System.out.println("Pipeline changed to " + pipeline); 
     } 
 
-    public Trajectory generateTargetTrajectory() {
+    public void mapOriginPairs() {
+        //initialize dictionary 
+        poses = new HashMap<Double, Pose2d>(); 
+        poses.put(this.getTid(), origin);
+        System.out.println("Successfully mapped");
+
+    }
+
+    public Trajectory generateTargetTrajectory(Pose2d origin) {
         System.out.println("Trajectory generated successfully"); 
+        
         config = new TrajectoryConfig(
            Constants.AutoConstants.kMaxSpeedMetersPerSecond,
            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
            .setKinematics(Constants.Swerve.swerveKinematics);
         
         //set tag pose as the current origin 
-        Pose2d origin = this.getTagPose();
+        //origin = this.getTagPose();
 
         RobotContainer.s_Swerve.resetOdometry(origin);
     
