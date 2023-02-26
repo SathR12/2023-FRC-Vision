@@ -95,7 +95,7 @@ public class Limelight {
     public void mapOriginPairs() {
         //initialize dictionary 
         if (this.getTv() == 1) {
-            poses.put(this.getTid(), getTagPose());
+            poses.put(this.getTid(), this.getTagPose());
             System.out.println("Successfully mapped");
         }
 
