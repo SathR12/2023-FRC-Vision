@@ -117,7 +117,7 @@ public class Limelight {
             // Pass through no interior points 
             List.of(),
             // End at apriltag pose 
-            origin,
+            new Pose2d(0, 0),
             config);
 
         return trajectory; 
