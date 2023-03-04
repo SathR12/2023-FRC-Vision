@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -45,17 +46,12 @@ public class Limelight {
         tid = table.getEntry("tid");
         tagpose = table.getEntry("targetpose_robotspace").getDoubleArray(new double[6]); 
         botpose = table.getEntry("robotpose_targetspace").getDoubleArray(new double[6]); 
-
         poses = new HashMap<Double, Pose2d>(); 
     
     }
 
     public Pose2d getTagPose() { 
-        return new Pose2d(tagpose[0], tagpose[1], new Rotation2d(tagpose[5]));
-    }
-
-    public Pose2d getBotPose() {  //limelight bot pose 
-        return new Pose2d(botpose[0], botpose[1], new Rotation2d(botpose[5]));
+        return new Pose2d(-botpose[0], -botpose[1], new Rotation2d(180));
     }
 
     public void printTargetPoses() {
@@ -105,21 +101,24 @@ public class Limelight {
 
     }
 
-    public Trajectory generateTargetTrajectory(Pose2d origin, TrajectoryConfig config) {
+    public Trajectory generateTargetTrajectory(TrajectoryConfig config) {
         System.out.println("Trajectory generated successfully"); 
         //set tag pose as the current origin 
         //origin = this.getTagPose();
-        RobotContainer.s_Swerve.resetOdometry(origin); //sets origin to tag pose 
+        if (this.getTv() == 1) {
+            RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose()); //sets origin to tag pose 
     
-        trajectory = TrajectoryGenerator.generateTrajectory(
-            // robot pose -> target space 
-            RobotContainer.s_Swerve.getPose(),
-            // Pass through no interior points 
-            List.of(),
-            // End at apriltag pose 
-            new Pose2d(0, 0),
-            config);
+            trajectory = TrajectoryGenerator.generateTrajectory(
+                // robot pose -> target space 
+                RobotContainer.s_Swerve.getPose(),
+                // Pass through no interior points 
+                List.of(),
+                // End at apriltag pose 
+                this.getTagPose(),
+                config);
 
+        }
+        
         return trajectory; 
     
     }
